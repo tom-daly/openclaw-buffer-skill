@@ -79,10 +79,10 @@ buffer post "Draft idea" --profile twitter --draft
 ```
 
 #### `buffer queue`
-- [ ] View pending/scheduled posts
-- [ ] Show: post text (truncated), profile(s), scheduled time
-- [ ] Option: `--profile <id>` to filter by profile
-- [ ] Option: `--limit <n>` to show only N posts
+- [x] View pending/scheduled posts
+- [x] Show: post text (truncated), profile(s), scheduled time
+- [x] Option: `--profile <id>` to filter by profile
+- [x] Option: `--limit <n>` to show only N posts
 
 **Example output:**
 ```
@@ -140,7 +140,7 @@ Upcoming Posts (5):
   }
   ```
 
-- [ ] **Query: Get Scheduled Posts**
+- [x] **Query: Get Scheduled Posts**
   ```graphql
   query GetScheduledPosts($profileId: ID) {
     scheduledPosts(profileId: $profileId) {
@@ -341,11 +341,11 @@ Rose: *executes buffer post command*
 28. Test image posting (or document workaround)
 
 ### Phase 4: Queue Management (Tasks 29-33)
-29. Implement GetScheduledPosts query
-30. Create `buffer queue` command
-31. Add `--profile` filter option
-32. Add `--limit` option
-33. Test queue viewing
+29. [x] Implement GetScheduledPosts query
+30. [x] Create `buffer queue` command
+31. [x] Add `--profile` filter option
+32. [x] Add `--limit` option
+33. [x] Test queue viewing
 
 ### Phase 5: Error Handling (Tasks 34-40)
 34. Add network error handling to API wrapper

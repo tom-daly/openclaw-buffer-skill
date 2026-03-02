@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { createCli, formatProfiles, formatPostSuccess } from '../buffer.js';
+import { createCli, formatProfiles, formatPostSuccess, formatQueuePosts } from '../buffer.js';
 
 describe('buffer CLI', () => {
   let logSpy;
@@ -90,6 +90,43 @@ describe('buffer CLI', () => {
       profileIds: ['p1', 'p2'],
       queue: true,
     });
+  });
+
+  it('executes queue command with profile + limit', async () => {
+    const getScheduledPosts = vi.fn().mockResolvedValue([
+      {
+        id: 'sched_1',
+        text: 'A scheduled post',
+        scheduledAt: '2026-03-03T14:00:00.000Z',
+        profiles: [{ service: 'Twitter', username: 'learnopenclaw' }],
+      },
+      {
+        id: 'sched_2',
+        text: 'Another scheduled post',
+        scheduledAt: '2026-03-03T15:00:00.000Z',
+        profiles: [{ service: 'LinkedIn', username: 'ahmad' }],
+      },
+    ]);
+
+    const cli = createCli({ api: { getScheduledPosts } });
+    await cli.parseAsync(['node', 'buffer', 'queue', '--profile', 'profile_1', '--limit', '1']);
+
+    expect(getScheduledPosts).toHaveBeenCalledWith('profile_1');
+    expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('Upcoming Posts (1)'));
+  });
+
+  it('formats queue output', () => {
+    const output = formatQueuePosts([
+      {
+        text: 'This is a long scheduled post that should be rendered cleanly in output',
+        scheduledAt: '2026-03-03T14:00:00.000Z',
+        profiles: [{ service: 'Twitter' }, { service: 'LinkedIn' }],
+      },
+    ]);
+
+    expect(output).toContain('Upcoming Posts (1)');
+    expect(output).toContain('Twitter, LinkedIn');
+    expect(output).toContain('Scheduled:');
   });
 
   it('formats post success output', () => {

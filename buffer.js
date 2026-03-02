@@ -39,6 +39,27 @@ export function formatPostSuccess(post) {
   return lines.join('\n');
 }
 
+export function formatQueuePosts(posts) {
+  if (!posts.length) {
+    return 'No upcoming posts in queue.';
+  }
+
+  const lines = [`Upcoming Posts (${posts.length}):`, ''];
+
+  posts.forEach((post, index) => {
+    const text = (post.text || '').trim();
+    const preview = text.length > 80 ? `${text.slice(0, 77)}...` : text;
+    const services = (post.profiles || []).map((profile) => profile.service).filter(Boolean).join(', ') || 'unknown';
+    const scheduled = post.scheduledAt ? new Date(post.scheduledAt).toISOString() : 'n/a';
+
+    lines.push(`${index + 1}. "${preview}" → ${services}`);
+    lines.push(`   Scheduled: ${scheduled}`);
+    lines.push('');
+  });
+
+  return lines.join('\n').trimEnd();
+}
+
 function resolveProfileIds(options, profiles = []) {
   if (options.profile) {
     return [options.profile];
@@ -111,6 +132,28 @@ export function createCli({ api } = {}) {
         console.log(formatPostSuccess(createdPost));
       } catch (error) {
         spinner.fail('Failed to create post');
+        console.error(chalk.red(`\n❌ ${error.message}`));
+        process.exitCode = 1;
+      }
+    });
+
+  program
+    .command('queue')
+    .description('View pending/scheduled posts')
+    .option('--profile <id>', 'Filter by profile ID')
+    .option('--limit <n>', 'Limit number of posts shown', '10')
+    .action(async (options) => {
+      const spinner = ora('Fetching scheduled posts...').start();
+      try {
+        const activeApi = api || new BufferApi({ ...getConfig(), apiKey: validateApiKey(getConfig().apiKey) });
+        const posts = await activeApi.getScheduledPosts(options.profile);
+        const limit = Number.parseInt(options.limit, 10);
+
+        const limited = Number.isNaN(limit) || limit <= 0 ? posts : posts.slice(0, limit);
+        spinner.stop();
+        console.log(formatQueuePosts(limited));
+      } catch (error) {
+        spinner.fail('Failed to fetch queue');
         console.error(chalk.red(`\n❌ ${error.message}`));
         process.exitCode = 1;
       }

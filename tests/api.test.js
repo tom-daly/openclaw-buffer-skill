@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { BufferApi, CREATE_POST_MUTATION } from '../lib/buffer-api.js';
+import { BufferApi, CREATE_POST_MUTATION, GET_SCHEDULED_POSTS_QUERY } from '../lib/buffer-api.js';
 
 describe('BufferApi', () => {
   it('returns profiles from GraphQL response', async () => {
@@ -47,6 +47,35 @@ describe('BufferApi', () => {
     expect(post).toHaveBeenCalledWith('', {
       query: CREATE_POST_MUTATION,
       variables: { input },
+    });
+  });
+
+  it('gets scheduled posts with optional profileId filter', async () => {
+    const post = vi.fn().mockResolvedValue({
+      data: {
+        data: {
+          scheduledPosts: [
+            {
+              id: 'sched_1',
+              text: 'Upcoming launch update',
+              scheduledAt: '2026-03-04T09:00:00Z',
+              profiles: [{ service: 'twitter', username: 'learnopenclaw' }],
+            },
+          ],
+        },
+      },
+    });
+
+    const api = new BufferApi(
+      { apiKey: 'valid_api_key_12345', apiUrl: 'https://api.buffer.com/graphql' },
+      { post },
+    );
+
+    const result = await api.getScheduledPosts('profile_1');
+    expect(result).toHaveLength(1);
+    expect(post).toHaveBeenCalledWith('', {
+      query: GET_SCHEDULED_POSTS_QUERY,
+      variables: { profileId: 'profile_1' },
     });
   });
 
