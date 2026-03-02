@@ -48,17 +48,17 @@ Connected Profiles:
 ```
 
 #### `buffer post <text>`
-- [ ] Create a post with text content
+- [x] Create a post with text content
 - [ ] Options:
-  - `--profile <id>` - Single profile
-  - `--profiles <ids>` - Comma-separated profile IDs
-  - `--all` - Post to all profiles
-  - `--time <datetime>` - Schedule for specific time (ISO 8601)
-  - `--queue` - Add to queue instead of immediate/scheduled
-  - `--image <path>` - Attach image (local file path)
-  - `--draft` - Create as idea/draft instead of post
+  - [x] `--profile <id>` - Single profile
+  - [x] `--profiles <ids>` - Comma-separated profile IDs
+  - [x] `--all` - Post to all profiles
+  - [x] `--time <datetime>` - Schedule for specific time (ISO 8601)
+  - [x] `--queue` - Add to queue instead of immediate/scheduled
+  - [ ] `--image <path>` - Attach image (local file path)
+  - [ ] `--draft` - Create as idea/draft instead of post
 - [ ] Validate inputs (text length, file exists, etc.)
-- [ ] Clear success messages with post IDs/URLs
+- [x] Clear success messages with post IDs/URLs
 
 **Examples:**
 ```bash
@@ -321,14 +321,14 @@ Rose: *executes buffer post command*
 ### Phase 2: Core Posting (Tasks 11-20)
 11. [x] Implement `lib/utils.js` with date parsing and validation
 12. [x] Implement CreatePost mutation in API wrapper
-13. Create `buffer post` command with basic options
-14. Add `--profile` option
-15. Add `--time` scheduling option
-16. Add `--queue` option
-17. Add `--profiles` (multi-channel) option
-18. Add `--all` option
-19. Test posting to single profile
-20. Test multi-channel posting
+13. [x] Create `buffer post` command with basic options
+14. [x] Add `--profile` option
+15. [x] Add `--time` scheduling option
+16. [x] Add `--queue` option
+17. [x] Add `--profiles` (multi-channel) option
+18. [x] Add `--all` option
+19. [x] Test posting to single profile
+20. [x] Test multi-channel posting
 
 ### Phase 3: Images & Ideas (Tasks 21-28)
 21. Implement image upload support (if Buffer API supports it, or document limitation)

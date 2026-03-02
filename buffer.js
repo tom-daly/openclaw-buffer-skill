@@ -6,6 +6,7 @@ import ora from 'ora';
 import { getConfig } from './lib/config.js';
 import { validateApiKey } from './lib/auth.js';
 import { BufferApi } from './lib/buffer-api.js';
+import { parseProfilesList, parseScheduleTime, validatePostText } from './lib/utils.js';
 
 export function formatProfiles(profiles) {
   if (!profiles.length) {
@@ -19,6 +20,40 @@ export function formatProfiles(profiles) {
   });
 
   return ['Connected Profiles:', ...lines].join('\n');
+}
+
+export function formatPostSuccess(post) {
+  const services = (post.profiles || []).map((profile) => profile.service).filter(Boolean).join(', ') || 'unknown';
+  const lines = [
+    `${chalk.green('✅')} Post created successfully`,
+    `ID: ${post.id || 'n/a'}`,
+    `Profiles: ${services}`,
+  ];
+
+  if (post.scheduledAt) {
+    lines.push(`Scheduled: ${new Date(post.scheduledAt).toISOString()}`);
+  } else {
+    lines.push('Scheduled: immediate/queue');
+  }
+
+  return lines.join('\n');
+}
+
+function resolveProfileIds(options, profiles = []) {
+  if (options.profile) {
+    return [options.profile];
+  }
+
+  const list = parseProfilesList(options.profiles);
+  if (list.length) {
+    return list;
+  }
+
+  if (options.all) {
+    return profiles.map((profile) => profile.id).filter(Boolean);
+  }
+
+  throw new Error('No target profile provided. Use --profile, --profiles, or --all.');
 }
 
 export function createCli({ api } = {}) {
@@ -41,6 +76,41 @@ export function createCli({ api } = {}) {
         console.log(formatProfiles(profiles));
       } catch (error) {
         spinner.fail('Failed to fetch profiles');
+        console.error(chalk.red(`\n❌ ${error.message}`));
+        process.exitCode = 1;
+      }
+    });
+
+  program
+    .command('post <text>')
+    .description('Create a post with text content')
+    .option('--profile <id>', 'Post to a single profile ID')
+    .option('--profiles <ids>', 'Comma-separated profile IDs')
+    .option('--all', 'Post to all connected profiles')
+    .option('--time <datetime>', 'Schedule post for an ISO datetime')
+    .option('--queue', 'Add to queue')
+    .action(async (text, options) => {
+      const spinner = ora('Creating post...').start();
+      try {
+        const activeApi = api || new BufferApi({ ...getConfig(), apiKey: validateApiKey(getConfig().apiKey) });
+        const normalizedText = validatePostText(text);
+        const scheduledAt = parseScheduleTime(options.time);
+
+        const profiles = options.all ? await activeApi.getProfiles() : [];
+        const profileIds = resolveProfileIds(options, profiles);
+
+        const input = {
+          text: normalizedText,
+          profileIds,
+          queue: Boolean(options.queue),
+          ...(scheduledAt ? { scheduledAt } : {}),
+        };
+
+        const createdPost = await activeApi.createPost(input);
+        spinner.stop();
+        console.log(formatPostSuccess(createdPost));
+      } catch (error) {
+        spinner.fail('Failed to create post');
         console.error(chalk.red(`\n❌ ${error.message}`));
         process.exitCode = 1;
       }
