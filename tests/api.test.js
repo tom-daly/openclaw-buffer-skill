@@ -167,4 +167,27 @@ describe('BufferApi', () => {
     await expect(api.getProfiles()).rejects.toThrow(/network call/);
     await expect(api.getProfiles()).rejects.toThrow(/Check internet connectivity/);
   });
+
+  it('maps GraphQL errors to actionable validation guidance', async () => {
+    const post = vi.fn().mockResolvedValue({
+      data: {
+        errors: [{ message: 'Validation failed: profileIds is required' }],
+      },
+    });
+    const api = new BufferApi({ apiKey: 'key_1234567890', apiUrl: 'https://api.buffer.com/graphql' }, { post });
+
+    await expect(api.createPost({ text: 'hello', profileIds: [] })).rejects.toThrow(/Buffer GraphQL request/);
+    await expect(api.createPost({ text: 'hello', profileIds: [] })).rejects.toThrow(/Verify your input values/);
+  });
+
+  it('maps non-auth HTTP errors with retry guidance', async () => {
+    const post = vi.fn().mockRejectedValue({
+      message: 'Request failed with status code 500',
+      response: { status: 500 },
+    });
+    const api = new BufferApi({ apiKey: 'key_1234567890', apiUrl: 'https://api.buffer.com/graphql' }, { post });
+
+    await expect(api.getProfiles()).rejects.toThrow(/Buffer API request \(500\)/);
+    await expect(api.getProfiles()).rejects.toThrow(/Retry in a moment/);
+  });
 });

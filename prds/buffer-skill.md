@@ -49,7 +49,7 @@ Connected Profiles:
 
 #### `buffer post <text>`
 - [x] Create a post with text content
-- [ ] Options:
+- [x] Options:
   - [x] `--profile <id>` - Single profile
   - [x] `--profiles <ids>` - Comma-separated profile IDs
   - [x] `--all` - Post to all profiles
@@ -231,18 +231,18 @@ Need help? Visit: https://developers.buffer.com/
 - [x] Unit tests for utilities (date parsing, validation)
 - [x] Integration tests with Buffer API (if possible, or mocked)
 - [x] CLI command tests
-- [ ] Minimum 80% code coverage
+- [x] Minimum 80% code coverage
 - [x] All tests passing
 
 ### 7. Documentation
 
 #### SKILL.md
-- [ ] Quick start guide
-- [ ] Authentication setup
-- [ ] Command reference with examples
-- [ ] Common use cases
-- [ ] Troubleshooting section
-- [ ] OpenClaw integration examples
+- [x] Quick start guide
+- [x] Authentication setup
+- [x] Command reference with examples
+- [x] Common use cases
+- [x] Troubleshooting section
+- [x] OpenClaw integration examples
 
 **Example OpenClaw usage:**
 ```
@@ -254,16 +254,16 @@ Rose: *executes buffer post command*
 ```
 
 #### README.md
-- [ ] Project overview
-- [ ] Installation instructions
-- [ ] Quick start
-- [ ] API documentation link
-- [ ] Contributing guidelines
+- [x] Project overview
+- [x] Installation instructions
+- [x] Quick start
+- [x] API documentation link
+- [x] Contributing guidelines
 
 #### Code Comments
-- [ ] All functions documented with JSDoc
-- [ ] Complex logic explained
-- [ ] GraphQL queries documented
+- [x] All functions documented with JSDoc
+- [x] Complex logic explained
+- [x] GraphQL queries documented
 
 ### 8. Quality & Polish
 - [ ] Consistent code style (use Prettier/ESLint if time permits)
@@ -331,14 +331,14 @@ Rose: *executes buffer post command*
 20. [x] Test multi-channel posting
 
 ### Phase 3: Images & Ideas (Tasks 21-28)
-21. Implement image upload support (if Buffer API supports it, or document limitation)
+21. [x] Implement image upload support (if Buffer API supports it, or document limitation)
 22. [x] Add `--image` option to post command
 23. [x] Implement CreateIdea mutation
 24. [x] Add `--draft` option to post command
 25. [x] Implement `buffer ideas` command
 26. [x] Implement GetIdeas query
 27. [x] Test idea creation
-28. Test image posting (or document workaround)
+28. [x] Test image posting (or document workaround)
 
 ### Phase 4: Queue Management (Tasks 29-33)
 29. [x] Implement GetScheduledPosts query
@@ -360,21 +360,21 @@ Rose: *executes buffer post command*
 41. [x] Write API wrapper unit tests
 42. [x] Write utils unit tests
 43. [x] Write CLI command tests
-44. Write integration tests (mocked or real API)
-45. Ensure 80%+ coverage
-46. Fix failing tests
-47. Add test documentation
-48. All tests passing
+44. [x] Write integration tests (mocked or real API)
+45. [x] Ensure 80%+ coverage
+46. [x] Fix failing tests
+47. [x] Add test documentation
+48. [x] All tests passing
 
 ### Phase 7: Documentation (Tasks 49-56)
-49. Write SKILL.md with quick start
-50. Add command reference to SKILL.md
-51. Add examples to SKILL.md
-52. Add troubleshooting section
-53. Write README.md
-54. Add JSDoc comments to all functions
-55. Create example files (examples/*.js)
-56. Add inline code comments
+49. [x] Write SKILL.md with quick start
+50. [x] Add command reference to SKILL.md
+51. [x] Add examples to SKILL.md
+52. [x] Add troubleshooting section
+53. [x] Write README.md
+54. [x] Add JSDoc comments to all functions
+55. [x] Create example files (examples/*.js)
+56. [x] Add inline code comments
 
 ### Phase 8: Polish (Tasks 57-63)
 57. Add colored output with Chalk

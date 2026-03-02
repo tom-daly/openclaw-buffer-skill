@@ -15,6 +15,11 @@ import {
   parseLimit,
 } from './lib/utils.js';
 
+/**
+ * Render profiles command output.
+ * @param {Array<{id:string, service?:string, username?:string}>} profiles
+ * @returns {string}
+ */
 export function formatProfiles(profiles) {
   if (!profiles.length) {
     return 'No connected profiles found.';
@@ -29,6 +34,11 @@ export function formatProfiles(profiles) {
   return ['Connected Profiles:', ...lines].join('\n');
 }
 
+/**
+ * Render a success message for created posts.
+ * @param {{id?: string, scheduledAt?: string, profiles?: Array<{service?: string}>}} post
+ * @returns {string}
+ */
 export function formatPostSuccess(post) {
   const services = (post.profiles || []).map((profile) => profile.service).filter(Boolean).join(', ') || 'unknown';
   const lines = [
@@ -46,6 +56,11 @@ export function formatPostSuccess(post) {
   return lines.join('\n');
 }
 
+/**
+ * Render queue entries in readable numbered form.
+ * @param {Array<{text?: string, scheduledAt?: string, profiles?: Array<{service?: string}>}>} posts
+ * @returns {string}
+ */
 export function formatQueuePosts(posts) {
   if (!posts.length) {
     return 'No upcoming posts in queue.';
@@ -67,6 +82,11 @@ export function formatQueuePosts(posts) {
   return lines.join('\n').trimEnd();
 }
 
+/**
+ * Render a success message for created ideas.
+ * @param {{id?: string, text?: string}} idea
+ * @returns {string}
+ */
 export function formatIdeaSuccess(idea) {
   return [
     `${chalk.green('✅')} Idea saved successfully`,
@@ -75,6 +95,11 @@ export function formatIdeaSuccess(idea) {
   ].join('\n');
 }
 
+/**
+ * Render ideas list output.
+ * @param {Array<{text?: string, createdAt?: string}>} ideas
+ * @returns {string}
+ */
 export function formatIdeas(ideas) {
   if (!ideas.length) {
     return 'No saved ideas found.';
@@ -95,6 +120,12 @@ export function formatIdeas(ideas) {
   return lines.join('\n').trimEnd();
 }
 
+/**
+ * Resolve final profile IDs from mutually exclusive target options.
+ * @param {{profile?: string, profiles?: string, all?: boolean}} options
+ * @param {Array<{id?: string}>} profiles
+ * @returns {string[]}
+ */
 function resolveProfileIds(options, profiles = []) {
   if (options.profile) {
     return [options.profile];
@@ -112,6 +143,10 @@ function resolveProfileIds(options, profiles = []) {
   throw new Error('No target profile provided. Use --profile, --profiles, or --all.');
 }
 
+/**
+ * Create commander CLI program.
+ * @param {{api?: any}} [options]
+ */
 export function createCli({ api } = {}) {
   const program = new Command();
 
@@ -236,6 +271,10 @@ export function createCli({ api } = {}) {
   return program;
 }
 
+/**
+ * Run CLI with argv.
+ * @param {string[]} argv
+ */
 export async function run(argv = process.argv) {
   const program = createCli();
   await program.parseAsync(argv);
