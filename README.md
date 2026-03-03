@@ -92,7 +92,7 @@ npm run format:check
 
 - 🔧 [Buffer Developer Docs](https://developers.buffer.com/)
 - 🔑 [Get Your API Key](https://publish.buffer.com/settings/api)
-- 🐙 [GitHub Repository](https://github.com/ahmadabugosh/openclaw-buffer-skills)
+- 🐙 [GitHub Repository](https://github.com/ahmadabugosh/openclaw-buffer-skill)
 
 ## 🤝 Contributing
 
