@@ -220,28 +220,39 @@ export function createCli({ api } = {}) {
           throw new Error('No channel ID specified. Use --profile <id> to specify a channel.');
         }
 
-        if (options.draft) {
-          const createdIdea = await activeApi.createIdea({ text: normalizedText, profileIds });
-          spinner.stop();
-          console.log(formatIdeaSuccess(createdIdea));
-          return;
-        }
-
         const scheduledAt = parseScheduleTime(options.time);
         const imagePath = validateImagePath(options.image);
+        
+        // Look up the service type for this channel (needed for platform metadata)
+        let service = '';
+        try {
+          const allProfiles = profiles.length ? profiles : await activeApi.getProfiles();
+          const match = allProfiles.find(p => p.id === channelId);
+          if (match) service = match.service || '';
+        } catch { /* ignore - service metadata is optional for LinkedIn */ }
+        
+        // Upload image to Imgur if local path provided (Buffer GraphQL needs URLs)
+        let imageUrl = '';
+        if (imagePath) {
+          const fs = await import('fs');
+          const imgData = fs.readFileSync(imagePath).toString('base64');
+          const imgRes = await (await import('axios')).default.post('https://api.imgur.com/3/image', 
+            { image: imgData, type: 'base64' },
+            { headers: { Authorization: 'Client-ID 546c25a59c58ad7' } }
+          );
+          imageUrl = imgRes.data?.data?.link || '';
+          if (imageUrl) console.log(chalk.gray(`  📷 Image uploaded: ${imageUrl}`));
+        }
+        
         const input = {
           text: normalizedText,
           channelId,
-          now: !options.queue && !scheduledAt,
-          queue: Boolean(options.queue),
+          service,
+          draft: Boolean(options.draft),
+          now: !options.queue && !options.draft && !scheduledAt,
+          queue: Boolean(options.queue) || Boolean(options.draft),
           ...(scheduledAt ? { scheduledAt } : {}),
-          ...(imagePath
-            ? {
-                // BLOCKED: Buffer GraphQL local upload flow is undocumented in public beta docs.
-                // TODO: revisit and switch to official upload mechanism once confirmed.
-                media: [{ filePath: imagePath }],
-              }
-            : {}),
+          ...(imageUrl ? { imageUrl } : {}),
         };
 
         const createdPost = await activeApi.createPost(input);
